@@ -42,6 +42,9 @@ jobs:
       - run: git diff --exit-code
 
   build-builder-image:
+    permissions:
+      contents: read
+      packages: write
     strategy:
       fail-fast: false
       matrix:
@@ -61,7 +64,7 @@ jobs:
         id: meta
         with:
           images: ghcr.io/${{ github.repository_owner }}/ruby.wasm/builder/${{ matrix.entry.target }}
-      - uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@v6
         with:
           context: builders/${{ matrix.entry.target }}
           push: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/tags/*' }}
@@ -114,7 +117,7 @@ jobs:
           path: ./rubies
           key: ${{ matrix.entry.rubies_cache_key }}
       - uses: docker/setup-buildx-action@v3
-      - uses: docker/build-push-action@v5
+      - uses: docker/build-push-action@v6
         id: builder-image
         env:
           DOCKER_BUILD_NO_SUMMARY: true
